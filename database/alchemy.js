@@ -25,6 +25,20 @@ exports.buildalch = async function(message) {
 
 // Function to check if is banned
 var buildalch = async function buildalch(message) {
+	var imgs = {};
+
+	let lines = require('fs').readFileSync('./inis/IDtoImage.txt', 'latin1')
+		.split('\n')
+		.filter(Boolean);
+		
+	let oldline = '';
+
+	for(var num = 0; num < lines.length; num = num + 1){
+		let l = lines[num].split('|');
+
+		imgs[l[0]] = l[1];
+	}
+
 	// These are to be used in web crawler
 	var alquimia =[[[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1]],
 					[[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1]],
@@ -33,25 +47,52 @@ var buildalch = async function buildalch(message) {
 					[[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1],[40362,1]]];
 	// Image processing
 	var jimp = require('jimp');
-
 	
-	jimp.read('./images/alq.png').then(image => {
+	let tablein = jimp.read('./images/alq.png');
+
+	Promise.apply(tablein).then(function(table) {
+		return Promise.all(tablein);
+	}).then(function(table) {
+		for(let j = 0; j < 5; j = j + 1){
+			for(let i = 0; i < 8; i = i + 1){
+				let pathIn = "./GFIcons/" + imgs[alquimia[j][i][0]].toString().trim();
+				
+				let icon = jimp.read(pathIn);
+				Promise.apply(icon).then(function(data2) {
+					return Promise.all(icon);
+				}).then(function(data2) {
+					table.composite(data2, 3, 3);
+				});
+	
+				console.log("lalala");
+				table.write('./outs/endalq.png');
+				return;
+			}
+		}
+	});
+
+	/*jimp.read('./images/alq.png').then(image => {
 			for(let j = 0; j < 5; j = j + 1){
 				for(let i = 0; i < 8; i = i + 1){
+					let pathIn = ".\\GFIcons\\" + imgs[alquimia[j][i][0]].toString().trim();
+					console.log(pathIn);
 					
-					var answer = await getImage64(alquimia[j][i][0]);
-					console.log(answer);
-					/*let a = jimp.read(Buffer.from(answer));
-					//console.log(a);
-					image.composite(a, 3, 3);     // composites another Jimp image over this image at x, y
-					image.write('lena-half-bw.png');
+					let icon = jimp.read(pathIn);
+					Promise.all(icon).then(function(data) {
+						return Promise.all(icon);
+					}).then(function(data) {
+						image.composite(data, 3, 3);
+					});
+
+					//image.composite(icon, 3, 3);     // composites another Jimp image over this image at x, y
+					console.log("lalala");
+					image.write('./outs/endalq.png');
 					return;
-					*/
 				}
 			}
 		}).catch(err => {
 			message.channel.send('Erro ' + err);
-		});
+		});*/
 	
   return;
 }
